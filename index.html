@@ -3,15 +3,514 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Golonof - ELDP pour Orthophonistes</title>
+    <title>Golonof - Test phonologique ELDP</title>
+    <meta name="description" content="Application gratuite pour orthophonistes : passation et analyse numérisée de l'Épreuve Lilloise de Discrimination Phonologique (ELDP)">
     <style>
-        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
-        h1 { color: #6f00ff; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6f00ff;
+            --secondary: #FF9800;
+            --success: #4CAF50;
+            --text-dark: #333;
+            --text-light: #666;
+            --bg-light: #f3eaff;
+            --bg-white: #ffffff;
+        }
+
+        a { color: white; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, #8b00ff 100%);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(111, 0, 255, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, var(--bg-light) 0%, #fff 100%);
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .hero-text h1 {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .hero-text p {
+            font-size: 1.3rem;
+            color: var(--text-light);
+            margin-bottom: 2rem;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .screenshots {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            align-items: center;
+            overflow-x: auto;
+            padding: 1rem;
+        }
+
+        .screenshot-container {
+            flex-shrink: 0;
+            width: 250px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s;
+        }
+
+        .screenshot-container:hover {
+            transform: scale(1.05);
+        }
+
+        .screenshot-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        section {
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        section h2 {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(111, 0, 255, 0.2);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            color: var(--primary);
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .benefits {
+            background: var(--bg-light);
+        }
+
+        .benefit-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .benefit-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            background: white;
+            color: var(--text-dark);
+            padding: 1.5rem;
+            border-radius: 10px;
+        }
+
+        .benefit-item::before {
+            content: "✓";
+            color: var(--success);
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .about-eldp {
+            background: linear-gradient(135deg, var(--primary) 0%, #8b00ff 100%);
+            color: white;
+            border-radius: 20px;
+            padding: 3rem;
+            margin: 2rem 0;
+        }
+
+        .about-eldp h3 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .eldp-versions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .version-card {
+            background: white;
+            color: var(--text-dark);
+            padding: 1.5rem;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .version-card h4 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        footer {
+            background: var(--text-dark);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: var(--secondary);
+        }
+
+        @media (max-width: 768px) {
+            .hero-content {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-text h1 {
+                font-size: 2rem;
+            }
+
+            .hero-text p {
+                font-size: 1.1rem;
+            }
+
+            .logo {
+                font-size: 1.3rem;
+            }
+
+            section h2 {
+                font-size: 2rem;
+            }
+
+            .screenshots {
+                flex-wrap: nowrap;
+            }
+        }
+
+        .disclaimer {
+            background: #fff3cd;
+            border-left: 4px solid var(--secondary);
+            padding: 1rem;
+            margin: 2rem 0;
+            border-radius: 5px;
+        }
+
+        .disclaimer strong {
+            color: var(--secondary);
+        }
     </style>
 </head>
 <body>
-    <h1>Golonof</h1>
-    <p>Application d'Épreuve Lilloise de Discrimination Phonologique pour orthophonistes.</p>
-    <p>Disponible sur Google Play Store.</p>
+    <header>
+        <nav>
+            <div class="logo">
+                <img src="icone.png" alt="Icone de l'application Golonof" height="100" width="100"> Golonof - Test phonologique
+            </div>
+            <a href="https://play.google.com/store/apps/details?id=com.golonof.app" class="btn btn-secondary" target="_blank">
+                <svg width="20px" height="20px" aria-hidden="true" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"><path fill="none" d="M0,0h40v40H0V0z"></path><g><path d="M19.7,19.2L4.3,35.3c0,0,0,0,0,0c0.5,1.7,2.1,3,4,3c0.8,0,1.5-0.2,2.1-0.6l0,0l17.4-9.9L19.7,19.2z" fill="#EA4335"></path><path d="M35.3,16.4L35.3,16.4l-7.5-4.3l-8.4,7.4l8.5,8.3l7.5-4.2c1.3-0.7,2.2-2.1,2.2-3.6C37.5,18.5,36.6,17.1,35.3,16.4z" fill="#FBBC04"></path><path d="M4.3,4.7C4.2,5,4.2,5.4,4.2,5.8v28.5c0,0.4,0,0.7,0.1,1.1l16-15.7L4.3,4.7z" fill="#4285F4"></path><path d="M19.8,20l8-7.9L10.5,2.3C9.9,1.9,9.1,1.7,8.3,1.7c-1.9,0-3.6,1.3-4,3c0,0,0,0,0,0L19.8,20z" fill="#34A853"></path></g></svg> 
+                Télécharger
+            </a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1>Test phonologique ELDP numérisé</h1>
+                    <p>L'application gratuite pour orthophonistes facilitant la passation et l'analyse de l'Épreuve Lilloise de Discrimination Phonologique</p>
+                    <div class="cta-buttons">
+                        <a href="https://play.google.com/store/apps/details?id=com.golonof.app" class="btn btn-primary" target="_blank">
+                            <svg width="40px" height="40px" aria-hidden="true" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"><path fill="none" d="M0,0h40v40H0V0z"></path><g><path d="M19.7,19.2L4.3,35.3c0,0,0,0,0,0c0.5,1.7,2.1,3,4,3c0.8,0,1.5-0.2,2.1-0.6l0,0l17.4-9.9L19.7,19.2z" fill="#EA4335"></path><path d="M35.3,16.4L35.3,16.4l-7.5-4.3l-8.4,7.4l8.5,8.3l7.5-4.2c1.3-0.7,2.2-2.1,2.2-3.6C37.5,18.5,36.6,17.1,35.3,16.4z" fill="#FBBC04"></path><path d="M4.3,4.7C4.2,5,4.2,5.4,4.2,5.8v28.5c0,0.4,0,0.7,0.1,1.1l16-15.7L4.3,4.7z" fill="#4285F4"></path><path d="M19.8,20l8-7.9L10.5,2.3C9.9,1.9,9.1,1.7,8.3,1.7c-1.9,0-3.6,1.3-4,3c0,0,0,0,0,0L19.8,20z" fill="#34A853"></path></g></svg> 
+                            Télécharger sur Google Play
+                        </a>
+                        <a href="#features" class="btn btn-secondary">
+                            En savoir plus
+                        </a>
+                    </div>
+                </div>
+                <div class="screenshots">
+                    <div class="screenshot-container">
+                        <img src="sc1.png" alt="Golonof screenshot initialisation">
+                    </div>
+                    <div class="screenshot-container">
+                        <img src="sc2.png" alt="Golonof screenshot résultat">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="features">
+            <h2>📱 Fonctionnalités principales</h2>
+            <div class="features">
+                <div class="feature-card">
+                    <div class="feature-icon">🎵</div>
+                    <h3>Lecture audio standardisée</h3>
+                    <p>Passation audio standardisée des items ELDP 1 et ELDP 2 pour une évaluation fiable et reproductible.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚙️</div>
+                    <h3>Sélection automatique</h3>
+                    <p>Choix automatique des paramètres en fonction de l'âge de l'enfant.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">✏️</div>
+                    <h3>Saisie intuitive</h3>
+                    <p>Interface fluide et intuitive pour prévenir les erreurs de cotation pendant l'évaluation.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Calcul automatique</h3>
+                    <p>Calcul automatique des scores et conversion en écarts-types pour une analyse immédiate.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📄</div>
+                    <h3>Rapport détaillé</h3>
+                    <p>Génération du compte-rendu final avec analyse détaillée des performances.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📈</div>
+                    <h3>Visualisation des écarts-types</h3>
+                    <p>Affichage clair des écarts-types par rapport aux normes de référence.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="benefits">
+            <h2>💡 Avantages pour les orthophonistes</h2>
+            <div class="benefit-list">
+                <div class="benefit-item">
+                    <span>Gain de temps : passation fluide, cotation instantanée</span>
+                </div>
+                <div class="benefit-item">
+                    <span>Interface épurée : productivité maximale sans report sur papier</span>
+                </div>
+                <div class="benefit-item">
+                    <span>Utilisable partout : aucune autorisation spéciale requise</span>
+                </div>
+                <div class="benefit-item">
+                    <span>Support de formation : idéal pour étudiants en orthophonie</span>
+                </div>
+                <div class="benefit-item">
+                    <span>Sans frais : aucun abonnement requis</span>
+                </div>
+                <div class="benefit-item">
+                    <span>100% gratuit financé par des publicités non-intrusives</span>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>📊 Analyses disponibles</h2>
+            <div class="about-eldp">
+                <p style="font-size: 1.1rem; margin-bottom: 2rem;">L'application génère des scores détaillés permettant une analyse qualitative approfondie :</p>
+                <div class="benefit-list">
+                    <div class="benefit-item" style="border: 1px solid rgba(255,255,255,0.3);">
+                        <span>Score total par vitesse (normale/rapide)</span>
+                    </div>
+                    <div class="benefit-item" style="border: 1px solid rgba(255,255,255,0.3);">
+                        <span>Analyse par nombre de syllabes</span>
+                    </div>
+                    <div class="benefit-item" style="border: 1px solid rgba(255,255,255,0.3);">
+                        <span>Position de l'opposition (initiale, médiane, finale)</span>
+                    </div>
+                    <div class="benefit-item" style="border: 1px solid rgba(255,255,255,0.3);">
+                        <span>Type d'opposition (vocalique, consonantique, structurale)</span>
+                    </div>
+                    <div class="benefit-item" style="border: 1px solid rgba(255,255,255,0.3);">
+                        <span>Écarts-types par tranche d'âge</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>📖 À propos de l'ELDP</h2>
+            <div class="about-eldp">
+                <h3>L'Épreuve Lilloise de Discrimination Phonologique</h3>
+                <p style="font-size: 1.1rem; margin-bottom: 2rem;">
+                    Développée au <a href="https://ufr3s.univ-lille.fr/medecine/orthophonie/reseau-professionnel">Département d'Orthophonie Gabriel Decroix de l'Université de Lille 2</a>, l'ELDP répond au besoin crucial d'un test standardisé suite à l'arrêt de l'EDP 4-8. Elle utilise exclusivement des pseudo-mots respectant les règles phonotactiques du français, évitant ainsi le recours aux connaissances sémantiques. 
+                    Les auteurs de l'épreuve sont <i>Macchi, Descours, Girard, Guitton, Morel, Timmermans et Boidein</i>.
+                </p>
+                
+                <div class="eldp-versions">
+                    <div class="version-card">
+                        <h4>ELDP 1</h4>
+                        <p><strong>Âge :</strong> 5 à 6,5 ans</p>
+                        <p>Structures simples à complexes</p>
+                        <p>72 paires de pseudo-mots</p>
+                    </div>
+                    <div class="version-card">
+                        <h4>ELDP 2</h4>
+                        <p><strong>Âge :</strong> 5,5 à 11,5 ans</p>
+                        <p>Complexité accrue</p>
+                        <p>72 paires de pseudo-mots</p>
+                    </div>
+                </div>
+                
+                <p style="margin-top: 2rem; font-size: 0.95rem; opacity: 0.9;">
+                    Chaque version est évaluée à vitesse normale puis à vitesse rapide pour une analyse complète des capacités de discrimination phonologique.
+                </p>
+            </div>
+            
+            <div class="disclaimer">
+                <strong>⚠️ Avertissement :</strong> Ce logiciel n'est pas un dispositif médical. Il ne doit pas être utilisé à des fins de diagnostic. Il facilite la saisie d'informations afin d'accélérer la prise en charge des jeunes patients chez l'orthophoniste.
+            </div>
+            
+            <p style="text-align: center; margin-top: 2rem; color: var(--text-light);">
+                L'Université de Lille n'est pas à l'origine de la création de l'application <strong>Golonof</strong>. 
+                C'est l'initiative d'un parent désireux de mettre à disposition du plus grand nombre cet outil remarquable.
+            </p>
+        </section>
+
+        <section style="text-align: center; background: var(--bg-light); border-radius: 20px; padding: 3rem;">
+            <h2>🚀 Prêt à simplifier vos évaluations ?</h2>
+            <p style="font-size: 1.2rem; margin: 2rem 0; color: var(--text-light);">
+                Téléchargez Golonof gratuitement et découvrez une nouvelle façon d'utiliser l'ELDP
+            </p>
+            <a href="https://play.google.com/store/apps/details?id=com.golonof.app" class="btn btn-primary" target="_blank" style="font-size: 1.2rem; padding: 1.2rem 2.5rem;">
+                <svg width="40px" height="40px" aria-hidden="true" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"><path fill="none" d="M0,0h40v40H0V0z"></path><g><path d="M19.7,19.2L4.3,35.3c0,0,0,0,0,0c0.5,1.7,2.1,3,4,3c0.8,0,1.5-0.2,2.1-0.6l0,0l17.4-9.9L19.7,19.2z" fill="#EA4335"></path><path d="M35.3,16.4L35.3,16.4l-7.5-4.3l-8.4,7.4l8.5,8.3l7.5-4.2c1.3-0.7,2.2-2.1,2.2-3.6C37.5,18.5,36.6,17.1,35.3,16.4z" fill="#FBBC04"></path><path d="M4.3,4.7C4.2,5,4.2,5.4,4.2,5.8v28.5c0,0.4,0,0.7,0.1,1.1l16-15.7L4.3,4.7z" fill="#4285F4"></path><path d="M19.8,20l8-7.9L10.5,2.3C9.9,1.9,9.1,1.7,8.3,1.7c-1.9,0-3.6,1.3-4,3c0,0,0,0,0,0L19.8,20z" fill="#34A853"></path></g></svg> 
+                Télécharger maintenant
+            </a>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p style="font-size: 1.2rem; margin-bottom: 1rem;">Golonof - Test Phonologique</p>
+            <p>Application gratuite pour orthophonistes</p>
+            <div class="footer-links">
+                <a href="https://play.google.com/store/apps/details?id=com.golonof.app" target="_blank">Google Play</a>
+                <a href="https://sites.google.com/view/slp7592/golonof-test-phonologique" target="_blank">Politique de confidentialité</a>
+                <a href="mailto:slp7592@gmail.com?subject=Application%20Golonof">Contact</a>
+            </div>
+            <p style="margin-top: 2rem; opacity: 0.7; font-size: 0.9rem;">
+                © 2025 Golonof - Développé avec ❤️ pour les orthophonistes
+            </p>
+        </div>
+    </footer>
 </body>
 </html>
