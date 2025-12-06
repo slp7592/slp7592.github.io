@@ -125,29 +125,41 @@
         .screenshots {
             display: flex;
             gap: 1rem;
-            justify-content: center;
+            justify-content: flex-start; /* Changé de center à flex-start */
             align-items: center;
             overflow-x: auto;
+            overflow-y: hidden;
             padding: 1rem;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+            max-width: 380px; /* Limite la largeur visible = 1 image + gap */
+            margin: 0 auto; /* Centre le conteneur */
         }
 
         .screenshot-container {
             flex-shrink: 0;
-            width: 180px;
+            width: 360px;
             border-radius: 20px;
             overflow: hidden;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
             transition: transform 0.3s;
+            scroll-snap-align: start; /* Changé de center à start */
         }
 
         .screenshot-container:hover {
             transform: scale(1.05);
         }
 
-        .screenshot-container img {
-            width: 100%;
-            height: auto;
-            display: block;
+        /* Pour mobile */
+        @media (max-width: 768px) {
+            .screenshots {
+                max-width: 90vw;
+            }
+            
+            .screenshot-container {
+                width: 85vw;
+                max-width: 360px;
+            }
         }
 
         section {
